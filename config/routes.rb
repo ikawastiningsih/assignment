@@ -1,4 +1,5 @@
 Rails.application.routes.draw do
+  post '/users/auth'
   resources :schedule_users
   resources :schedules
   resources :hospitals

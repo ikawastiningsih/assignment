@@ -6,13 +6,6 @@ class SchedulesController < ApplicationController
     @keyword = params['keyword']
     data = []
 
-    # schedule = Schedule.first
-    # list = schedule.doctors
-    # schedule = Schedule.all(:joins => :doctors)
-    # schedule = Schedule.includes(:doctors)
-    # list_schedule = schedule.doctors
-    # render json: list
-    # return
     @list_schedules = Schedule.all.any_of({ :hari => /.*#{@keyword}.*/i}, { :jam_mulai => /.*#{@keyword}.*/i}, { :jam_selesai => /.*#{@keyword}.*/i})
 
     if @list_schedules.present?

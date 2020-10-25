@@ -7,4 +7,6 @@ class User
   field :email, type: String
   field :tempat_lahir, type: String
   field :tanggal_lahir, type: String
+  field :username, type: String
+  field :password, type: String
 end
