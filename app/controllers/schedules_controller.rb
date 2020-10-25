@@ -3,9 +3,36 @@ class SchedulesController < ApplicationController
 
   # GET /schedules
   def index
-    @schedules = Schedule.all
+    @keyword = params['keyword']
+    data = []
 
-    render json: @schedules
+    @list_schedules = Schedule.all.any_of({ :hari => /.*#{@keyword}.*/i}, { :jam_mulai => /.*#{@keyword}.*/i}, { :jam_selesai => /.*#{@keyword}.*/i})
+
+    if @list_schedules.present?
+      @list_schedules.each do |item|
+        array = {
+            id: item.id.to_s,
+            doctor_id: item.doctor_id,
+            hospital_id: item.hospital_id,
+            hari: item.hari,
+            jam_mulai: item.jam_mulai,
+            jam_selesai: item.jam_selesai
+        }
+        data.push(array)
+      end
+        @return = {
+          status: true, 
+          message: "Data Ditemukan", 
+          content: data,
+        }
+    else
+      @return = {
+        status: false,
+        message: "Mohon maaf, Data tidak Ditemukan!", 
+        content: nil, 
+      }
+    end
+    render json: @return
   end
 
   # GET /schedules/1
@@ -18,10 +45,19 @@ class SchedulesController < ApplicationController
     @schedule = Schedule.new(schedule_params)
 
     if @schedule.save
-      render json: @schedule, status: :created, location: @schedule
+      @return = {
+        status: true, 
+        message: "Berhasil Simpan Data", 
+        content: @schedule,
+      }
     else
-      render json: @schedule.errors, status: :unprocessable_entity
+      @return = {
+        status: false,
+        message: "Mohon maaf, Data tidak berhasil di simpan", 
+        content: nil, 
+      }
     end
+    render json: @return
   end
 
   # PATCH/PUT /schedules/1
@@ -46,6 +82,6 @@ class SchedulesController < ApplicationController
 
     # Only allow a trusted parameter "white list" through.
     def schedule_params
-      params.require(:schedule).permit(:doctor_id, :hospital_id, :jam_mulai, :jam_selesai)
+      params.permit(:doctor_id, :hospital_id, :hari, :jam_mulai, :jam_selesai)
     end
 end
