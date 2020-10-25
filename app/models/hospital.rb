@@ -1,8 +1,8 @@
 class Hospital
   include Mongoid::Document
   include Mongoid::Timestamps
-  has_many :schedule
-  has_many :doctor, through: :schedule
+  # has_many :schedules
+  # has_many :doctors, through: :schedules
 
   field :nama, type: String
   field :alamat, type: String

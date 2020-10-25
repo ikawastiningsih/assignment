@@ -6,14 +6,25 @@ class SchedulesController < ApplicationController
     @keyword = params['keyword']
     data = []
 
+    # schedule = Schedule.first
+    # list = schedule.doctors
+    # schedule = Schedule.all(:joins => :doctors)
+    # schedule = Schedule.includes(:doctors)
+    # list_schedule = schedule.doctors
+    # render json: list
+    # return
     @list_schedules = Schedule.all.any_of({ :hari => /.*#{@keyword}.*/i}, { :jam_mulai => /.*#{@keyword}.*/i}, { :jam_selesai => /.*#{@keyword}.*/i})
 
     if @list_schedules.present?
       @list_schedules.each do |item|
+        doctor = Doctor.find_by(id: item.doctor_id)
+        hospital = Hospital.find_by(id: item.hospital_id)
         array = {
             id: item.id.to_s,
-            doctor_id: item.doctor_id,
-            hospital_id: item.hospital_id,
+            nama_dokter: doctor.nama,
+            spesialis: doctor.spesialis,
+            jenis_kelamin: doctor.jenis_kelamin,
+            nama_rumah_sakit: hospital.nama,
             hari: item.hari,
             jam_mulai: item.jam_mulai,
             jam_selesai: item.jam_selesai

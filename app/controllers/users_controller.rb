@@ -18,10 +18,19 @@ class UsersController < ApplicationController
     @user = User.new(user_params)
 
     if @user.save
-      render json: @user, status: :created, location: @user
+      @return = {
+        status: true, 
+        message: "Berhasil Simpan Data", 
+        content: @user,
+      }
     else
-      render json: @user.errors, status: :unprocessable_entity
+      @return = {
+        status: false,
+        message: "Mohon maaf, Data tidak berhasil di simpan", 
+        content: nil, 
+      }
     end
+    render json: @return
   end
 
   # PATCH/PUT /users/1
@@ -46,6 +55,6 @@ class UsersController < ApplicationController
 
     # Only allow a trusted parameter "white list" through.
     def user_params
-      params.require(:user).permit(:nama, :jenis_kelamin, :nohp, :email, :tempat_lahir, :tanggal_lahir)
+      params.permit(:nama, :jenis_kelamin, :nohp, :email, :tempat_lahir, :tanggal_lahir)
     end
 end

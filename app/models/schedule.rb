@@ -1,8 +1,8 @@
 class Schedule
   include Mongoid::Document
   include Mongoid::Timestamps
-  belongs_to :doctor
-  belongs_to :hospital
+  # has_many :doctors
+  # belongs_to :hospital
 
   field :doctor_id, type: String
   field :hospital_id, type: String
