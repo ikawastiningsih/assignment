@@ -3,9 +3,46 @@ class ScheduleUsersController < ApplicationController
 
   # GET /schedule_users
   def index
-    @schedule_users = ScheduleUser.all
+    @keyword = params['keyword']
+    data = []
 
-    render json: @schedule_users
+    @book_schedules = ScheduleUser.all.any_of({ :nama_user => /.*#{@keyword}.*/i}, { :keluhan => /.*#{@keyword}.*/i})
+
+    if @book_schedules.present?
+      @book_schedules.each do |item|
+        schedule = Schedule.where(id: item.schedule_id)
+        doctor = Doctor.find_by(id: schedule[0]['doctor_id'])
+        hospital = Hospital.find_by(id: schedule[0]['hospital_id'])
+        user = User.find_by(id: item.user_id)
+             
+        array = {
+            id: item.id.to_s,
+            nama_user: item.nama_user,
+            jk_user: user.jenis_kelamin,
+            no_handphone: user.nohp,
+            email: user.email,
+            keluhan: item.keluhan,
+            nama_dokter: doctor.nama,
+            nama_rumah_sakit: hospital.nama,
+            hari: schedule[0]['hari'],
+            jam_mulai: schedule[0]['jam_mulai'],
+            jam_selesai: schedule[0]['jam_selesai']
+        }
+        data.push(array)
+      end
+        @return = {
+          status: true, 
+          message: "Data Ditemukan", 
+          content: data,
+        }
+    else
+      @return = {
+        status: false,
+        message: "Mohon maaf, Data tidak Ditemukan!", 
+        content: nil, 
+      }
+    end
+    render json: @return
   end
 
   # GET /schedule_users/1
